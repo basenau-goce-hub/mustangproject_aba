@@ -1796,9 +1796,30 @@ function downloadData (element_id) {
                     </div>
                     <div class="boxtabelle boxinhalt noPaddingTop borderSpacing">
                         <div class="boxzeile">
-                            <div class="boxdaten legende "><xsl:value-of select="$i18n.bt147"/>:</div>
-                            <div id="BT-147" title="BT-147" class="boxdaten wert"><xsl:value-of select="format-number(sum(xr:PRICE_DETAILS/xr:Item_price_discount),'###.##0,00','decimal')"/></div>
+                            <div class="boxdaten legende "><xsl:value-of select="$i18n.bt147"/>:</div> <!-- Anpassung Zeile 1800: Änderung der xsl auf "for-each", um über xr:Item_price_discount zu iterieren -->
+                            <div id="BT-147" title="BT-147" class="boxdaten wert">
+                                <xsl:for-each select="xr:PRICE_DETAILS/xr:Item_price_discount[@xr:type='allowance' or not(@xr:type)]">
+                                    <xsl:value-of select="format-number(.,'###.##0,00','decimal')"/>
+                                    <xsl:if test="position() != last()">
+                                        <br/>
+                                    </xsl:if>
+                                </xsl:for-each>
+                            </div>
                         </div>
+                        <!-- Neue Box für Abschläge -->
+                        <xsl:if test="xr:PRICE_DETAILS/xr:Item_price_discount[@xr:type='charge']">
+                            <div class="boxzeile">
+                                <div class="boxdaten legende ">Zuschlag (netto):</div>
+                                <div class="boxdaten wert">
+                                    <xsl:for-each select="xr:PRICE_DETAILS/xr:Item_price_discount[@xr:type='charge']">
+                                        <xsl:value-of select="format-number(.,'###.##0,00','decimal')"/>
+                                        <xsl:if test="position() != last()">
+                                            <br/>
+                                        </xsl:if>
+                                    </xsl:for-each>
+                                </div>
+                            </div>
+                        </xsl:if>
                         <div class="boxzeile">
                             <div class="boxdaten legende "><xsl:value-of select="$i18n.bt148"/>:</div>
                             <div id="BT-148" title="BT-148" class="boxdaten wert"><xsl:value-of select="format-number(xr:PRICE_DETAILS/xr:Item_gross_price,'###.##0,00','decimal')"/></div>

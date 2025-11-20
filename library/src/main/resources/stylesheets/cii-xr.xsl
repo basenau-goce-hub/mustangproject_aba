@@ -2280,6 +2280,16 @@
         <xr:Item_price_discount>
             <xsl:attribute name="xr:id" select="'BT-147'"/>
             <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
+            <!-- Kennzeichnung Rabatt vs. Zuschlag -->
+            <xsl:attribute name="xr:type">
+                <xsl:choose>
+                    <!-- true = Zuschlag -->
+                    <xsl:when test="../ram:ChargeIndicator/udt:Indicator='true'">charge</xsl:when>
+                    <!-- Alles andere = Rabatt -->
+                    <xsl:otherwise>allowance</xsl:otherwise>
+                </xsl:choose>
+            </xsl:attribute>
+            <!-- Logik wie bisher -->
             <xsl:call-template name="unit_price_amount"/>
         </xr:Item_price_discount>
     </xsl:template>
