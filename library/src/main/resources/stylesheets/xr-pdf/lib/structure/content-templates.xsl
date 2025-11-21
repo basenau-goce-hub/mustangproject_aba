@@ -581,9 +581,9 @@
           <xsl:value-of select="xr:Invoiced_quantity_unit_of_measure_code"/>
         </fo:block>
       </fo:table-cell>
-      <fo:table-cell text-align="right" padding-right="1em">
-        <fo:block><xsl:value-of select="format-number(xr:PRICE_DETAILS/xr:Item_net_price, $at-least-two-picture, $lang)"/></fo:block>
-      </fo:table-cell>
+        <fo:table-cell text-align="right" padding-right="1em">
+          <fo:block><xsl:value-of select="format-number((xr:PRICE_DETAILS/xr:Item_net_price)[1], $at-least-two-picture, $lang)"/></fo:block>
+        </fo:table-cell>
       <fo:table-cell text-align="center">
         <fo:block>
           <xsl:value-of select="xr:PRICE_DETAILS/xr:Item_price_base_quantity"/>
@@ -675,51 +675,55 @@
       </xsl:call-template>
     </xsl:if>
 
-    <xsl:if test="xr:PRICE_DETAILS/xr:Item_price_discount[@xr:type='allowance' or not(@xr:type)]">
-      <xsl:variable name="allowanceValues">
-        <fo:block>
-          <xsl:for-each select="xr:PRICE_DETAILS/xr:Item_price_discount[@xr:type='allowance' or not(@xr:type)]">
-            <fo:block>
-              <xsl:value-of select="format-number(., $at-least-two-picture, $lang)"/>
-            </fo:block>
-          </xsl:for-each>
-        </fo:block>
-      </xsl:variable>
-      <xsl:call-template name="invoiceline-tabular-2-col-info">
-        <xsl:with-param name="col1">
-          <xsl:value-of select="xrf:field-label('xr:Item_price_discount')"/>
-        </xsl:with-param>
-        <xsl:with-param name="col2" select="$allowanceValues"/>
-      </xsl:call-template>
-    </xsl:if>
+    <xsl:variable name="allowance-discounts" select="xr:PRICE_DETAILS/xr:Item_price_discount[not(@xr:type) or @xr:type='allowance']"/>
+    <xsl:variable name="charge-discounts" select="xr:PRICE_DETAILS/xr:Item_price_discount[@xr:type='charge']"/>
+    <xsl:variable name="gross-price" select="xr:PRICE_DETAILS/xr:Item_gross_price"/>
 
-    <xsl:if test="xr:PRICE_DETAILS/xr:Item_price_discount[@xr:type='charge']">
-      <xsl:variable name="chargeValues">
-        <fo:block>
-          <xsl:for-each select="xr:PRICE_DETAILS/xr:Item_price_discount[@xr:type='charge']">
-            <fo:block>
-              <xsl:value-of select="format-number(., $at-least-two-picture, $lang)"/>
-            </fo:block>
-          </xsl:for-each>
-        </fo:block>
-      </xsl:variable>
-      <xsl:call-template name="invoiceline-tabular-2-col-info">
-        <xsl:with-param name="col1">
-          <xsl:value-of select="xrf:field-label('xr:Item_price_charge')"/>
-        </xsl:with-param>
-        <xsl:with-param name="col2" select="$chargeValues"/>
-      </xsl:call-template>
-    </xsl:if>
+    <xsl:if test="$allowance-discounts or $charge-discounts or $gross-price">
+      <xsl:for-each select="$allowance-discounts">
+        <xsl:call-template name="invoiceline-tabular-2-col-info">
+          <xsl:with-param name="col1">
+            <xsl:value-of select="xrf:field-label('xr:Item_price_discount')"/>
+            <xsl:text>: </xsl:text>
+            <xsl:value-of select="format-number(., $at-least-two-picture, $lang)"/>
+          </xsl:with-param>
+          <xsl:with-param name="col2">
+            <xsl:if test="position() = 1 and $gross-price">
+              <xsl:value-of select="xrf:field-label('xr:Item_gross_price')"/>
+              <xsl:text>: </xsl:text>
+                <xsl:value-of select="format-number($gross-price[1], $at-least-two-picture, $lang)"/>
+            </xsl:if>
+          </xsl:with-param>
+        </xsl:call-template>
+      </xsl:for-each>
 
-    <xsl:if test="xr:PRICE_DETAILS/xr:Item_gross_price">
-      <xsl:call-template name="invoiceline-tabular-2-col-info">
-        <xsl:with-param name="col1">
-          <xsl:value-of select="xrf:field-label('xr:Item_gross_price')"/>
-        </xsl:with-param>
-        <xsl:with-param name="col2">
-          <xsl:value-of select="format-number(xr:PRICE_DETAILS/xr:Item_gross_price, $at-least-two-picture, $lang)"/>
-        </xsl:with-param>
-      </xsl:call-template>
+      <xsl:for-each select="$charge-discounts">
+        <xsl:call-template name="invoiceline-tabular-2-col-info">
+          <xsl:with-param name="col1">
+            <xsl:value-of select="xrf:field-label('xr:Invoice_line_charge_amount')"/>
+            <xsl:text>: </xsl:text>
+            <xsl:value-of select="format-number(., $at-least-two-picture, $lang)"/>
+          </xsl:with-param>
+          <xsl:with-param name="col2">
+            <xsl:if test="position() = 1 and not($allowance-discounts) and $gross-price">
+              <xsl:value-of select="xrf:field-label('xr:Item_gross_price')"/>
+              <xsl:text>: </xsl:text>
+              <xsl:value-of select="format-number($gross-price[1], $at-least-two-picture, $lang)"/>
+            </xsl:if>
+          </xsl:with-param>
+        </xsl:call-template>
+      </xsl:for-each>
+
+      <xsl:if test="not($allowance-discounts or $charge-discounts) and $gross-price">
+        <xsl:call-template name="invoiceline-tabular-2-col-info">
+          <xsl:with-param name="col1">
+            <xsl:value-of select="xrf:field-label('xr:Item_gross_price')"/>
+            <xsl:text>: </xsl:text>
+            <xsl:value-of select="format-number($gross-price[1], $at-least-two-picture, $lang)"/>
+          </xsl:with-param>
+          <xsl:with-param name="col2"/>
+        </xsl:call-template>
+      </xsl:if>
     </xsl:if>
 
     <xsl:if test="xr:ITEM_INFORMATION/xr:Item_Sellers_identifier | xr:ITEM_INFORMATION/xr:Item_Buyers_identifier">
