@@ -546,7 +546,7 @@
             <xsl:apply-templates mode="value-list-entry" select="xr:Invoiced_quantity"/>
             <xsl:apply-templates mode="value-list-entry" select="xr:Invoiced_quantity_unit_of_measure_code"/>
             <xsl:apply-templates mode="value-list-entry" select="xr:PRICE_DETAILS/xr:Item_net_price">
-              <xsl:with-param name="value" select="format-number(xr:PRICE_DETAILS/xr:Item_net_price,$at-least-two-picture,$lang)"/>
+              <xsl:with-param name="value" select="format-number((xr:PRICE_DETAILS/xr:Item_net_price)[1],$at-least-two-picture,$lang)"/>
             </xsl:apply-templates>
             <xsl:apply-templates mode="sum-list-entry" select="xr:Invoice_line_net_amount">
               <xsl:with-param name="value" select="format-number(xr:Invoice_line_net_amount,$amount-picture,$lang)"/>
@@ -556,11 +556,23 @@
         <xsl:call-template name="list">
           <xsl:with-param name="layout" select="'einspaltig'"/>
           <xsl:with-param name="content">
-            <xsl:apply-templates mode="list-entry" select="xr:PRICE_DETAILS/xr:Item_price_discount">
-              <xsl:with-param name="value" select="format-number(xr:PRICE_DETAILS/xr:Item_price_discount,$at-least-two-picture,$lang)"/>
-            </xsl:apply-templates>
+            <xsl:variable name="allowance-discounts" select="xr:PRICE_DETAILS/xr:Item_price_discount[not(@xr:type) or @xr:type='allowance']"/>
+            <xsl:variable name="charge-discounts" select="xr:PRICE_DETAILS/xr:Item_price_discount[@xr:type='charge']"/>
+
+            <xsl:for-each select="$allowance-discounts">
+              <xsl:apply-templates mode="list-entry" select=".">
+                <xsl:with-param name="value" select="format-number(.,$at-least-two-picture,$lang)"/>
+              </xsl:apply-templates>
+            </xsl:for-each>
+
+            <xsl:for-each select="$charge-discounts">
+              <xsl:apply-templates mode="list-entry" select=".">
+                <xsl:with-param name="field-mapping-identifier" select="'xr:Invoice_line_charge_amount'"/>
+                <xsl:with-param name="value" select="format-number(.,$at-least-two-picture,$lang)"/>
+              </xsl:apply-templates>
+            </xsl:for-each>
             <xsl:apply-templates mode="list-entry" select="xr:PRICE_DETAILS/xr:Item_gross_price">
-              <xsl:with-param name="value" select="format-number(xr:PRICE_DETAILS/xr:Item_gross_price,$at-least-two-picture,$lang)"/>
+              <xsl:with-param name="value" select="format-number((xr:PRICE_DETAILS/xr:Item_gross_price)[1],$at-least-two-picture,$lang)"/>
             </xsl:apply-templates>
             <xsl:apply-templates mode="list-entry" select="xr:PRICE_DETAILS/xr:Item_price_base_quantity"/>
             <xsl:apply-templates mode="list-entry" select="xr:PRICE_DETAILS/xr:Item_price_base_quantity_unit_of_measure"/>
