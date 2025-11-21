@@ -168,6 +168,7 @@
   <entry key="xr:Item_net_price" id="BT-146">Price per unit (net)</entry>
   <entry key="xr:Invoice_line_net_amount" id="BT-131">Total price (net)</entry>
   <entry key="xr:Item_price_discount" id="BT-147">Discount (net)</entry>
+  <entry key="xr:Item_price_charge" id="BT-147_charge">Charge (net)</entry>
   <entry key="xr:Item_gross_price" id="BT-148">List price (net)</entry>
   <entry key="xr:Item_price_base_quantity" id="BT-149">Item price base quantity</entry>
   <entry key="xr:Item_price_base_quantity_unit_of_measure" id="BT-150">Unit code</entry>

@@ -170,6 +170,7 @@
   <entry key="xr:Item_net_price" id="BT-146">Preis pro Einheit (netto)</entry>
   <entry key="xr:Invoice_line_net_amount" id="BT-131">Gesamtpreis (netto)</entry>
   <entry key="xr:Item_price_discount" id="BT-147">Rabatt (netto)</entry>
+  <entry key="xr:Item_price_charge" id="BT-147_charge">Zuschlag (netto)</entry>
   <entry key="xr:Item_gross_price" id="BT-148">Listenpreis (netto)</entry>
   <entry key="xr:Item_price_base_quantity" id="BT-149">Basismenge zum Artikelpreis</entry>
   <entry key="xr:Item_price_base_quantity_unit_of_measure" id="BT-150">Code der Maßeinheit</entry>
