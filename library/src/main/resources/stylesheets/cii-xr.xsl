@@ -2281,10 +2281,12 @@
             <xsl:attribute name="xr:id" select="'BT-147'"/>
             <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
             <!-- Kennzeichnung Rabatt vs. Zuschlag -->
+            <xsl:variable name="is-charge"
+                          select="../ram:ChargeIndicator/udt:Indicator = true() or ../ram:ChargeIndicator/udt:Indicator = 'true'"/>
             <xsl:attribute name="xr:type">
                 <xsl:choose>
                     <!-- true = Zuschlag -->
-                    <xsl:when test="../ram:ChargeIndicator/udt:Indicator='true'">charge</xsl:when>
+                    <xsl:when test="$is-charge">charge</xsl:when>
                     <!-- Alles andere = Rabatt -->
                     <xsl:otherwise>allowance</xsl:otherwise>
                 </xsl:choose>

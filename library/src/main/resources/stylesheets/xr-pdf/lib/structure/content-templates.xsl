@@ -687,7 +687,7 @@
       </xsl:variable>
       <xsl:call-template name="invoiceline-tabular-2-col-info">
         <xsl:with-param name="col1">
-<xsl:value-of select="xrf:field-label('xr:Item_price_discount')"/>
+          <xsl:value-of select="xrf:field-label('xr:Item_price_discount')"/>
         </xsl:with-param>
         <xsl:with-param name="col2" select="$allowanceValues"/>
       </xsl:call-template>

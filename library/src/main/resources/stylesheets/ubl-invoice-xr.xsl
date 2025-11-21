@@ -1903,6 +1903,16 @@
       <xr:Item_price_discount>
          <xsl:attribute name="xr:id" select="'BT-147'"/>
          <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
+         <xsl:attribute name="xr:type">allowance</xsl:attribute>
+         <xsl:call-template name="unit_price_amount"/>
+      </xr:Item_price_discount>
+   </xsl:template>
+   <xsl:template mode="BT-147"
+                 match="cac:Price/cac:AllowanceCharge/cbc:Amount[preceding-sibling::cbc:ChargeIndicator = 'true']">
+      <xr:Item_price_discount>
+         <xsl:attribute name="xr:id" select="'BT-147'"/>
+         <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
+         <xsl:attribute name="xr:type">charge</xsl:attribute>
          <xsl:call-template name="unit_price_amount"/>
       </xr:Item_price_discount>
    </xsl:template>
