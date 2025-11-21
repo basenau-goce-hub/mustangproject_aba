@@ -653,9 +653,6 @@
         <label>Rabatt (netto)</label>
         <nummer>BT-147</nummer>
       </xsl:when>
-      <xsl:when test="$identifier = 'xr:Item_price_charge'">
-        <label>Zuschlag (netto)</label>
-      </xsl:when>
       <xsl:when test="$identifier = 'xr:Item_gross_price'">
         <label>Listenpreis (netto)</label>
         <nummer>BT-148</nummer>
