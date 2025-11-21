@@ -675,20 +675,42 @@
       </xsl:call-template>
     </xsl:if>
 
-    <xsl:if test="xr:PRICE_DETAILS/xr:Item_price_discount | xr:PRICE_DETAILS/xr:Item_gross_price">
+    <xsl:variable name="item-allowances" select="xr:PRICE_DETAILS/xr:Item_price_discount[@xr:type='allowance' or not(@xr:type)]"/>
+    <xsl:variable name="item-charges" select="xr:PRICE_DETAILS/xr:Item_price_discount[@xr:type='charge']"/>
+
+    <xsl:if test="$item-allowances or $item-charges or xr:PRICE_DETAILS/xr:Item_gross_price">
       <xsl:call-template name="invoiceline-tabular-2-col-info">
         <xsl:with-param name="col1">
-          <xsl:if test="xr:PRICE_DETAILS/xr:Item_price_discount">
-            <xsl:value-of select="xrf:field-label('xr:Item_price_discount')"/>
-            <xsl:text>: </xsl:text>
-            <xsl:value-of select="format-number(xr:PRICE_DETAILS/xr:Item_price_discount, $at-least-two-picture, $lang)"/>
+          <xsl:if test="$item-allowances">
+            <fo:block>
+              <xsl:value-of select="xrf:field-label('xr:Item_price_discount')"/>
+              <xsl:text>: </xsl:text>
+              <xsl:for-each select="$item-allowances">
+                <xsl:value-of select="format-number(xs:decimal(.), $at-least-two-picture, $lang)"/>
+                <xsl:if test="position() != last()">
+                  <xsl:text>; </xsl:text>
+                </xsl:if>
+              </xsl:for-each>
+            </fo:block>
+          </xsl:if>
+          <xsl:if test="$item-charges">
+            <fo:block>
+              <xsl:value-of select="xrf:field-label('xr:Item_price_charge')"/>
+              <xsl:text>: </xsl:text>
+              <xsl:for-each select="$item-charges">
+                <xsl:value-of select="format-number(xs:decimal(.), $at-least-two-picture, $lang)"/>
+                <xsl:if test="position() != last()">
+                  <xsl:text>; </xsl:text>
+                </xsl:if>
+              </xsl:for-each>
+            </fo:block>
           </xsl:if>
         </xsl:with-param>
         <xsl:with-param name="col2">
           <xsl:if test="xr:PRICE_DETAILS/xr:Item_gross_price">
             <xsl:value-of select="xrf:field-label('xr:Item_gross_price')"/>
             <xsl:text>: </xsl:text>
-            <xsl:value-of select="format-number(xr:PRICE_DETAILS/xr:Item_gross_price, $at-least-two-picture, $lang)"/>
+            <xsl:value-of select="format-number(xr:PRICE_DETAILS/xr:Item_gross_price[1], $at-least-two-picture, $lang)"/>
           </xsl:if>
         </xsl:with-param>
       </xsl:call-template>
